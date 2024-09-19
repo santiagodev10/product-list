@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
     <title>Product list</title>
 </head>
 <body>
@@ -14,13 +15,13 @@
                 <p>Waffle</p>
                 <h3>Waffle with Berries</h3>
                 <p>$6.50</p>
-                <div>
+                <div class="add-remove-to-cart-container">
                     <img src="./icons/icon-add-to-cart.svg" alt="cart-icon"> <!--svg icon-->
                     <span>Add to Cart</span>
                 </div>
             </li>
         </ul>
-        <section>
+        <section class="cart">
             <h2>Your Cart(0)</h2>
             <div>
                 <img src="./icons/illustration-empty-cart.svg" alt="empty-cart"> <!--svg icon-->
@@ -28,5 +29,6 @@
             </div>
         </section>
     </main>
+    <script src="./script.js"></script>
 </body>
 </html>
