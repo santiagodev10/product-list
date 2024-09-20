@@ -28,6 +28,7 @@ body {
 
 main {
     display: grid;
+    justify-content: center;
     gap: 20px;
     padding: 20px;
 }
@@ -42,6 +43,7 @@ ul {
 }
 
 ul li {
+    max-width: 300px;
     position: relative;
 }
 
@@ -72,6 +74,29 @@ ul li .product-description {
     font-size: 1.6rem;
     font-weight: 650;
     color: rgb(190 95 75);
+}
+
+ul li .add-remove-to-cart-container {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    position: absolute;
+    left: 50%;
+    top: 67%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 8px;
+    border: solid var(--Rose-500) 1px;
+    border-radius: 30px;
+
+}
+
+.add-remove-to-cart-container span {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--Rose-900);
 }
 
 .cart {
