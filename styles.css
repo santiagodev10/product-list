@@ -78,6 +78,7 @@ ul li .product-description {
 
 ul li .add-remove-to-cart-container {
     width: 50%;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,7 +91,7 @@ ul li .add-remove-to-cart-container {
     padding: 8px;
     border: solid var(--Rose-500) 1px;
     border-radius: 30px;
-
+    cursor: pointer;
 }
 
 .add-remove-to-cart-container span {
@@ -123,4 +124,45 @@ ul li .add-remove-to-cart-container {
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--Rose-500);
+}
+
+/*Active state styles*/
+
+.selected-product {
+    border: solid 2px rgb(190 95 75);
+}
+
+ul li .add-to-cart--selected {
+    justify-content: space-between;
+    background-color: rgb(190 95 75);
+    border: none;
+    cursor: default;
+}
+
+.add-remove-to-cart-container .buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15px;
+    height: 15px;
+    border: solid 1px white;
+    border-radius: 10px;
+    text-align: center;
+    background-color: rgb(190 95 75);
+}
+
+.add-remove-to-cart-container .wrapper {
+    width: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-remove-to-cart-container .icons {
+    width: 100%;
+}
+
+.add-remove-to-cart-container .product-counter {
+    color: white;
+    font-weight: 600;
 }
