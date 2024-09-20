@@ -1,5 +1,6 @@
 html {
     font-size: 62.5%;
+    font-family: "Red Hat Text", sans-serif;
 }
 
 * {
@@ -19,4 +20,35 @@ html {
     --Rose-400: hsl(7, 20%, 60%);
     --Rose-500: hsl(12, 20%, 44%);
     --Rose-900: hsl(14, 65%, 9%);
+}
+
+body {
+    background-color: var(--Rose-50);
+}
+
+main {
+    padding: 20px;
+}
+
+ul {
+    display: grid;
+    margin-top: 10px;
+}
+
+ul li {
+    position: relative;
+}
+
+ul li .product-image {
+    width: 100%;
+}
+
+.cart {
+    margin-top: 30px;
+}
+
+.cart div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
