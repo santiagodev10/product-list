@@ -40,6 +40,7 @@ h1 {
 
 ul {
     display: grid;
+    gap: 20px;
 }
 
 ul li {
@@ -59,12 +60,12 @@ ul li .product-description {
     margin-top: 20px;
 }
 
-.product-description .product-description__name {
+.product-description .product-description__category {
     font-size: 1.3rem;
     color: var(--Rose-500);
 }
 
-.product-description .product-description__specific-name {
+.product-description .product-description__name {
     font-size: 1.6rem;
     font-weight: 650;
     color: var(--Rose-900);
