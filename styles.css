@@ -94,7 +94,7 @@ ul li .add-remove-to-cart-container {
     cursor: pointer;
 }
 
-.add-remove-to-cart-container span {
+.add-remove-to-cart-container .add-cart__text {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--Rose-900);
