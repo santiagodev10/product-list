@@ -63,9 +63,9 @@ fetch('./data.json')
     })
     .catch(error => console.error('Error al cargar el archivo JSON:', error));
 
-ul.addEventListener("click", addItemToCart);
+ul.addEventListener("click", addSelectedStyles);
 
-function addItemToCart(event) {
+function addSelectedStyles(event) {
     console.log(event);
     //seleccionando elementos del DOM
     const buttonContainerClicked = event.target.closest(".add-remove-to-cart-container");
@@ -118,6 +118,19 @@ function addItemToCart(event) {
         addToCartButton.appendChild(productCounter);
         addToCartButton.appendChild(plusButton);
     }
-   
 
+    addItemToCart()
+}
+
+function addItemToCart() {
+    //Primero creamos los elementos que van a recibir la informacion
+    const divContainer = document.createElement("div");
+    const productName = document.createElement("p");
+    const numberOfProducts = document.createElement("span");
+    const unitPrice = document.createElement("span");
+    const totalPrice = document.createElement("span");
+    const buttonToRemoveProduct = document.createElement("button"); 
+
+    divContainer.append(productName)
+    //Añadiendo la informacion en los elementos
 }

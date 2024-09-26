@@ -28,10 +28,19 @@
         </ul>
         <section class="cart">
             <h2>Your Cart(0)</h2>
-            <div>
-                <img src="./icons/illustration-empty-cart.svg" alt="empty-cart"> <!--svg icon-->
-                <p>Your added items will appear here</p>
+            <div class="cart__product-selected-container">
+                <p class="product-selected__name">Classic Tiramisu</p>
+                <div class="product-selected__pricing-container">
+                    <span class="counter">1x</span>
+                    <span class="default-price">@ $5.50</span>
+                    <span class="accumulated-price">$5.50</span>
+                    <button class="remove-button"><img src="/icons/icon-remove-item.svg" alt="remove-item"></button>
+                </div>
             </div>
+            <!-- <div>
+                <img src="./icons/illustration-empty-cart.svg" alt="empty-cart">
+                <p>Your added items will appear here</p>
+            </div> -->
         </section>
     </main>
     <script src="./data.json"></script>
