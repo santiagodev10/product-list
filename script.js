@@ -13,8 +13,6 @@ fetch('./data.json')
         // Ahora "data" es un objeto JavaScript con los datos del JSON
         console.log(data); 
         for (const property in data) {
-            console.log(data[property].image.mobile);
-
             const li = document.createElement("li");
             const img = document.createElement("img");
             const productDescription = document.createElement("div");
@@ -42,7 +40,8 @@ fetch('./data.json')
             productDescriptionName.textContent = data[property].name;
             productDescriptionName.classList.add("product-description__name");
 
-            productDescriptionPrice.textContent = "$" + data[property].price;
+            const priceJson = data[property].price.toFixed(2);
+            productDescriptionPrice.textContent = "$" + priceJson;
             productDescriptionPrice.classList.add("product-description__price");
 
             productDescription.append(productDescriptionCategory);
@@ -69,7 +68,7 @@ function addSelectedStyles(event) {
     console.log(event);
     //seleccionando elementos del DOM
     const buttonContainerClicked = event.target.closest(".add-remove-to-cart-container");
-        
+    //validando cual de los li fue seleccionado    
     if(buttonContainerClicked) {
         console.log(buttonContainerClicked);
         const cartIcon = buttonContainerClicked.querySelector(".add-cart__icon");
@@ -117,20 +116,55 @@ function addSelectedStyles(event) {
         addToCartButton.appendChild(minusButton);
         addToCartButton.appendChild(productCounter);
         addToCartButton.appendChild(plusButton);
-    }
 
-    addItemToCart()
+        //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
+        const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
+        const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
+        
+        addItemToCart(nameProduct, priceProduct)
+    }
 }
 
-function addItemToCart() {
+function addItemToCart(productName, productPrice) {
     //Primero creamos los elementos que van a recibir la informacion
-    const divContainer = document.createElement("div");
-    const productName = document.createElement("p");
-    const numberOfProducts = document.createElement("span");
-    const unitPrice = document.createElement("span");
-    const totalPrice = document.createElement("span");
-    const buttonToRemoveProduct = document.createElement("button"); 
+    const cart = document.querySelector(".cart");
+    const emptyCart = document.querySelector(".cart__empty");
+    const productSelectedContainer = document.createElement("div");
+    const productNameElement = document.createElement("p");
+    const pricingContainer = document.createElement("div");
+    const counterOfProductsSelected = document.createElement("span");
+    const defaultPriceElement = document.createElement("span");
+    const accumulatedPriceElement = document.createElement("span");
+    const buttonToRemoveProduct = document.createElement("button");
+    const iconInsideButton = document.createElement("img"); 
 
-    divContainer.append(productName)
+    //Añadiendo las clases de los estilos a los elementos
+    emptyCart.classList.add("inactive");
+    productSelectedContainer.classList.add("cart__product-selected-container");
+    productNameElement.classList.add("product-selected__name");
+    pricingContainer.classList.add("product-selected__pricing-container");
+    counterOfProductsSelected.classList.add("counter");
+    defaultPriceElement.classList.add("default-price");
+    accumulatedPriceElement.classList.add("accumulated-price");
+    buttonToRemoveProduct.classList.add("remove-button");
+    iconInsideButton.classList.add
+
+    //Anidando los elementos dentro de los contenedores
+    cart.append(productSelectedContainer);
+    productSelectedContainer.append(productNameElement);
+    productSelectedContainer.append(pricingContainer);
+    pricingContainer.append(counterOfProductsSelected);
+    pricingContainer.append(defaultPriceElement);
+    pricingContainer.append(accumulatedPriceElement);
+    pricingContainer.append(buttonToRemoveProduct);
+    iconInsideButton.src = "./icons/icon-remove-item.svg";
+    buttonToRemoveProduct.append(iconInsideButton);
+
     //Añadiendo la informacion en los elementos
+    console.log(productNameElement.textContent = productName);
+    console.log(defaultPriceElement.textContent = productPrice);
+    counterOfProductsSelected.textContent = "1x";
+    productNameElement.textContent = productName;
+    defaultPriceElement.textContent = productPrice;
+    accumulatedPriceElement.textContent = productPrice;
 }
