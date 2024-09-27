@@ -1,11 +1,4 @@
 const ul = document.querySelector("ul");
-// const productImage = document.querySelector(".product-image");
-// const addToCartButton = document.querySelector(".add-remove-to-cart-container");
-// const cartIcon = document.querySelector(".add-cart__icon");
-// const cartText = document.querySelector(".add-cart__text");
-// const cart = document.querySelector(".cart");
-
-
 
 fetch('./data.json')
     .then(response => response.json()) // Analiza el contenido JSON
@@ -53,10 +46,9 @@ fetch('./data.json')
             iconCart.classList.add("add-cart__icon");
             addToCartText.textContent = "Add to Cart";
             addToCartText.classList.add("add-cart__text");
-
+            
             buttonContainer.append(iconCart);
             buttonContainer.append(addToCartText);
-            
         }
         // ... y así sucesivamente
     })
@@ -77,55 +69,58 @@ function addSelectedStyles(event) {
         const addToCartButton = buttonContainerClicked;
           
         /*Primero se ponen los estilos para el producto seleccionado*/
-        
         /*Eliminando los elementos que lleva por defecto el add to cart*/
-        cartIcon.remove();
-        cartText.remove();
         
-        /*poniendo estilos al borde de la imagen y al background del boton*/
-        console.log(productImage);
-            
-        addToCartButton.classList.add("add-to-cart--selected");
-        productImage.classList.add("selected-product");
-        /*creando los botones y el span*/
-        const minusButton = document.createElement("button");
-        const minusButtonIconWrapper = document.createElement("figure");
-        const minusButtonIcon = document.createElement("img");
-        const plusButton = document.createElement("button");
-        const plusButtonIconWrapper = document.createElement("figure");
-        const plusButtonIcon = document.createElement("img");
-        const productCounter = document.createElement("span");
-        /*añadiendo estilos a los botones y al span*/
-        minusButton.classList.add("buttons");
-        minusButtonIconWrapper.classList.add("wrapper");
-        minusButtonIcon.src = "./icons/icon-decrement-quantity.svg";
-        minusButtonIcon.classList.add("icons");
-        minusButton.append(minusButtonIconWrapper);
-        minusButtonIconWrapper.append(minusButtonIcon);
-        
-        plusButton.classList.add("buttons");
-        plusButtonIconWrapper.classList.add("wrapper");
-        plusButtonIcon.src = "./icons/icon-increment-quantity.svg";
-        plusButtonIcon.classList.add("icons");
-        plusButton.append(plusButtonIconWrapper);
-        plusButtonIconWrapper.append(plusButtonIcon);
-        
-        productCounter.textContent = "1";
-        productCounter.classList.add("product-counter");
-        /*añadiendo los botones y el span adentro del contenedor*/
-        addToCartButton.appendChild(minusButton);
-        addToCartButton.appendChild(productCounter);
-        addToCartButton.appendChild(plusButton);
+        if(cartIcon && cartText) {
+            cartIcon.remove();
+            cartText.remove();
 
-        //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
-        const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
-        const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
+            addToCartButton.classList.add("add-to-cart--selected");
+            productImage.classList.add("selected-product");
+            /*creando los botones y el span*/
+            const minusButton = document.createElement("button");
+            const minusButtonIconWrapper = document.createElement("figure");
+            const minusButtonIcon = document.createElement("img");
+            const plusButton = document.createElement("button");
+            const plusButtonIconWrapper = document.createElement("figure");
+            const plusButtonIcon = document.createElement("img");
+            const productCounterElement = document.createElement("span");
+            /*añadiendo estilos a los botones y al span*/
+            minusButton.classList.add("buttons");
+            minusButton.classList.add("minus-button")
+            minusButtonIconWrapper.classList.add("wrapper");
+            minusButtonIcon.src = "./icons/icon-decrement-quantity.svg";
+            minusButtonIcon.classList.add("icons");
+            minusButton.append(minusButtonIconWrapper);
+            minusButtonIconWrapper.append(minusButtonIcon);
         
-        addItemToCart(nameProduct, priceProduct)
+            plusButton.classList.add("buttons");
+            plusButton.classList.add("plus-button");
+            plusButtonIconWrapper.classList.add("wrapper");
+            plusButtonIcon.src = "./icons/icon-increment-quantity.svg";
+            plusButtonIcon.classList.add("icons");
+            plusButton.append(plusButtonIconWrapper);
+            plusButtonIconWrapper.append(plusButtonIcon);
+            console.log(productCounterElement.textContent);
+            
+            
+            productCounterElement.textContent = 1;
+            productCounterElement.classList.add("product-counter");
+            /*añadiendo los botones y el span adentro del contenedor*/
+            addToCartButton.appendChild(minusButton);
+            addToCartButton.appendChild(productCounterElement);
+            addToCartButton.appendChild(plusButton);
+
+            //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
+            const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
+            const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
+
+            addProductsToCart(nameProduct, priceProduct);
+        } 
     }
 }
 
-function addItemToCart(productName, productPrice) {
+function addProductsToCart(productName, productPrice) {
     //Primero creamos los elementos que van a recibir la informacion
     const cart = document.querySelector(".cart");
     const emptyCart = document.querySelector(".cart__empty");
@@ -139,7 +134,7 @@ function addItemToCart(productName, productPrice) {
     const iconInsideButton = document.createElement("img"); 
 
     //Añadiendo las clases de los estilos a los elementos
-    emptyCart.classList.add("inactive");
+    emptyCart.id = "inactive"
     productSelectedContainer.classList.add("cart__product-selected-container");
     productNameElement.classList.add("product-selected__name");
     pricingContainer.classList.add("product-selected__pricing-container");
@@ -167,4 +162,42 @@ function addItemToCart(productName, productPrice) {
     productNameElement.textContent = productName;
     defaultPriceElement.textContent = productPrice;
     accumulatedPriceElement.textContent = productPrice;
+}
+
+const buttonContainer = document.getElementsByClassName("add-remove-to-cart-container");
+console.log(buttonContainer);
+
+ul.addEventListener("click", increaseAndDecreaseItems)
+
+function increaseAndDecreaseItems(event) {
+    console.log(event);
+
+    const plusButtonClicked = event.target.closest(".plus-button");
+    const minusButtonClicked = event.target.closest(".minus-button");
+
+    console.log(plusButtonClicked, minusButtonClicked);
+    
+    if(plusButtonClicked) {
+        let productCounter = plusButtonClicked.previousSibling;
+        let productCounterNumber = parseFloat(productCounter.textContent);
+        console.log("AUMENTAR");
+        console.log(productCounter.textContent);
+        console.log(parseFloat(productCounter.textContent) + 1)
+        productCounterNumber += 1;
+        
+        //No habia reflejado los cambios en el DOM, ya que tenia que asignarle el productCounterNumber al texto del productCounter, ya que este ultimo es el elemento como tal
+        productCounter.textContent = productCounterNumber;
+        
+    } else if(minusButtonClicked) {
+        let productCounter = minusButtonClicked.nextSibling;
+        let productCounterNumber = parseFloat(productCounter.textContent);
+         console.log("DECRECER");
+
+         if(productCounter.textContent <= 1) {
+            console.log("NOOOO");
+         } else {
+            productCounterNumber -= 1;
+            productCounter.textContent = productCounterNumber;
+         }
+    }
 }
