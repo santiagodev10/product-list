@@ -1,3 +1,4 @@
+const main = document.querySelector("main");
 const ul = document.querySelector("ul");
 
 fetch('./data.json')
@@ -115,12 +116,12 @@ function addSelectedStyles(event) {
             const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
             const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
 
-            addProductsToCart(nameProduct, priceProduct);
+            addProductsToCart(nameProduct, productCounterElement.textContent, priceProduct);
         } 
     }
 }
 
-function addProductsToCart(productName, productPrice) {
+function addProductsToCart(productName, counter, productPrice) {
     //Primero creamos los elementos que van a recibir la informacion
     const cart = document.querySelector(".cart");
     const emptyCart = document.querySelector(".cart__empty");
@@ -156,18 +157,14 @@ function addProductsToCart(productName, productPrice) {
     buttonToRemoveProduct.append(iconInsideButton);
 
     //Añadiendo la informacion en los elementos
-    console.log(productNameElement.textContent = productName);
-    console.log(defaultPriceElement.textContent = productPrice);
-    counterOfProductsSelected.textContent = "1x";
+    counterOfProductsSelected.textContent = counter + "x";
     productNameElement.textContent = productName;
     defaultPriceElement.textContent = productPrice;
     accumulatedPriceElement.textContent = productPrice;
+    
 }
 
-const buttonContainer = document.getElementsByClassName("add-remove-to-cart-container");
-console.log(buttonContainer);
-
-ul.addEventListener("click", increaseAndDecreaseItems)
+main.addEventListener("click", increaseAndDecreaseItems)
 
 function increaseAndDecreaseItems(event) {
     console.log(event);
@@ -180,18 +177,21 @@ function increaseAndDecreaseItems(event) {
     if(plusButtonClicked) {
         let productCounter = plusButtonClicked.previousSibling;
         let productCounterNumber = parseFloat(productCounter.textContent);
-        console.log("AUMENTAR");
-        console.log(productCounter.textContent);
-        console.log(parseFloat(productCounter.textContent) + 1)
+        
+        // console.log("AUMENTAR");
+        // console.log(productCounter.textContent);
+        // console.log(parseFloat(productCounter.textContent) + 1)
         productCounterNumber += 1;
         
         //No habia reflejado los cambios en el DOM, ya que tenia que asignarle el productCounterNumber al texto del productCounter, ya que este ultimo es el elemento como tal
         productCounter.textContent = productCounterNumber;
-        
+
+        updateProductInsideCart(event, productCounter)
+
     } else if(minusButtonClicked) {
         let productCounter = minusButtonClicked.nextSibling;
         let productCounterNumber = parseFloat(productCounter.textContent);
-         console.log("DECRECER");
+        //  console.log("DECRECER");
 
          if(productCounter.textContent <= 1) {
             console.log("NOOOO");
@@ -199,5 +199,38 @@ function increaseAndDecreaseItems(event) {
             productCounterNumber -= 1;
             productCounter.textContent = productCounterNumber;
          }
+        updateProductInsideCart(event, productCounter)
     }
+}
+
+function updateProductInsideCart(event, productCounter) {
+    //Aqui queremos que el counter del carrito vaya a la par con el counter del producto
+    // console.log(event);
+    
+    const cart = event.target.closest("main").children[2];
+    let itemList = cart.querySelectorAll(".counter");
+    let cartElements = cart.children;
+    console.log(productCounter);
+    console.log(cartElements);
+    console.log(itemList[0]);
+    
+    // cartCounter.textContent = productCounter.textContent + "x";
+
+
+    for (let index = 0; index < itemList.length; index++) {
+        console.log(itemList[index]);
+
+        let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
+        console.log(productCounterName);
+        
+        //el nombre del producto que tiene el contador
+        let itemListName = itemList[index].closest(".product-selected__pricing-container").previousSibling.textContent;
+        console.log(itemListName);
+        
+        if(itemListName === productCounterName) {
+            itemList[index].textContent = productCounter.textContent + "x"
+        }     
+    }
+      
+    //Tambien queremos que el precio acumulado se vaya sumando a medida que añaden el mismo producto mas de una vez
 }
