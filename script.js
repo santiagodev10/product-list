@@ -114,9 +114,10 @@ function addSelectedStyles(event) {
 
             //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
             const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
+            const productCounter = productCounterElement.textContent;
             const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
 
-            addProductsToCart(nameProduct, productCounterElement.textContent, priceProduct);
+            addProductsToCart(nameProduct, productCounter, priceProduct);
         } 
     }
 }
@@ -177,10 +178,7 @@ function increaseAndDecreaseItems(event) {
     if(plusButtonClicked) {
         let productCounter = plusButtonClicked.previousSibling;
         let productCounterNumber = parseFloat(productCounter.textContent);
-        
-        // console.log("AUMENTAR");
-        // console.log(productCounter.textContent);
-        // console.log(parseFloat(productCounter.textContent) + 1)
+
         productCounterNumber += 1;
         
         //No habia reflejado los cambios en el DOM, ya que tenia que asignarle el productCounterNumber al texto del productCounter, ya que este ultimo es el elemento como tal
@@ -205,32 +203,49 @@ function increaseAndDecreaseItems(event) {
 
 function updateProductInsideCart(event, productCounter) {
     //Aqui queremos que el counter del carrito vaya a la par con el counter del producto
-    // console.log(event);
-    
     const cart = event.target.closest("main").children[2];
-    let itemList = cart.querySelectorAll(".counter");
-    let cartElements = cart.children;
-    console.log(productCounter);
-    console.log(cartElements);
-    console.log(itemList[0]);
+    let cartCounterList = cart.querySelectorAll(".counter");
+    let defaultPrice = cart.querySelectorAll(".default-price")
+    let accumulatedPrices = cart.querySelectorAll(".accumulated-price");
     
-    // cartCounter.textContent = productCounter.textContent + "x";
+    for (let index = 0; index < cartCounterList.length; index++) {
 
+        let defaultPriceNumber = Number(defaultPrice[index].textContent.substring(1));
+        
+        //substring extrae una porcion especifica de una cadena de texto, en este caso estamos extrayendolo todo excepto el simbolo de dolar, y convirtiendolo en tipo number
+        let accumulatedPriceNumber = Number(accumulatedPrices[index].textContent.substring(1));
 
-    for (let index = 0; index < itemList.length; index++) {
-        console.log(itemList[index]);
-
+        //el nombre del producto que tiene el contador en el menu
         let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
-        console.log(productCounterName);
         
-        //el nombre del producto que tiene el contador
-        let itemListName = itemList[index].closest(".product-selected__pricing-container").previousSibling.textContent;
-        console.log(itemListName);
+        //el nombre del producto que tiene el contador en el carrito
+        let cartCounterListName = cartCounterList[index].closest(".product-selected__pricing-container").previousSibling.textContent;
         
-        if(itemListName === productCounterName) {
-            itemList[index].textContent = productCounter.textContent + "x"
+        //si el nombre del producto en el carrito es igual al nombre del producto en el menu,entonces...
+        if(cartCounterListName === productCounterName) {
+
+            //asignandole el texto del contador del producto en el menu al texto del contador del producto que se seleccione en el carrito
+            cartCounterList[index].textContent = productCounter.textContent + "x";
+
+            const plusButtonClicked = event.target.closest(".plus-button");
+            const minusButtonClicked = event.target.closest(".minus-button");
+
+            //validando si se suma o resta el precio acumulado del producto si el usuario le da click al boton de plus o al de minus
+            if(plusButtonClicked) {
+                let sum = accumulatedPriceNumber += defaultPriceNumber                
+                
+                accumulatedPrices[index].textContent = "$" + sum.toFixed(2)
+                
+            } else if(minusButtonClicked) {
+
+                if(accumulatedPriceNumber <= defaultPriceNumber) {
+                    accumulatedPriceNumber = defaultPriceNumber;
+                } else {
+                    let rest = accumulatedPriceNumber -= defaultPriceNumber;
+
+                    accumulatedPrices[index].textContent = "$" + rest.toFixed(2);
+                }
+            }
         }     
     }
-      
-    //Tambien queremos que el precio acumulado se vaya sumando a medida que añaden el mismo producto mas de una vez
 }
