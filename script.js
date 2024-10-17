@@ -165,87 +165,147 @@ function addProductsToCart(productName, counter, productPrice) {
     
 }
 
-main.addEventListener("click", increaseAndDecreaseItems)
+// Delegación de eventos
+document.addEventListener("DOMContentLoaded", () => {
+    const mainElement = document.querySelector("main");
+    if (mainElement) {
+        mainElement.addEventListener("click", handleMainClick);
+    } else {
+        console.error("Main element is not found on DOMContentLoaded.");
+    }
+});
 
-function increaseAndDecreaseItems(event) {
-    console.log(event);
-
+function handleMainClick(event) {
     const plusButtonClicked = event.target.closest(".plus-button");
     const minusButtonClicked = event.target.closest(".minus-button");
-
-    console.log(plusButtonClicked, minusButtonClicked);
+    const removeButtonClicked = event.target.closest(".remove-button");
     
-    if(plusButtonClicked) {
-        let productCounter = plusButtonClicked.previousSibling;
-        let productCounterNumber = parseFloat(productCounter.textContent);
+    if (plusButtonClicked || minusButtonClicked) {
+        increaseAndDecreaseItems(event);
+    }
 
-        productCounterNumber += 1;
-        
-        //No habia reflejado los cambios en el DOM, ya que tenia que asignarle el productCounterNumber al texto del productCounter, ya que este ultimo es el elemento como tal
-        productCounter.textContent = productCounterNumber;
-
-        updateProductInsideCart(event, productCounter)
-
-    } else if(minusButtonClicked) {
-        let productCounter = minusButtonClicked.nextSibling;
-        let productCounterNumber = parseFloat(productCounter.textContent);
-        //  console.log("DECRECER");
-
-         if(productCounter.textContent <= 1) {
-            console.log("NOOOO");
-         } else {
-            productCounterNumber -= 1;
-            productCounter.textContent = productCounterNumber;
-         }
-        updateProductInsideCart(event, productCounter)
+    if (removeButtonClicked) {
+        removeProductFromCart(event);
     }
 }
 
+// Incrementar y decrementar items
+function increaseAndDecreaseItems(event) {
+    console.log(event);
+    const plusButtonClicked = event.target.closest(".plus-button");
+    const minusButtonClicked = event.target.closest(".minus-button");
+    console.log(plusButtonClicked, minusButtonClicked);
+
+    let productCounter;
+    if (plusButtonClicked) {
+        productCounter = plusButtonClicked.previousSibling;
+        let productCounterNumber = parseFloat(productCounter.textContent);
+        productCounterNumber += 1;
+        productCounter.textContent = productCounterNumber;
+        updateProductInsideCart(event, productCounter);
+    } else if (minusButtonClicked) {
+        productCounter = minusButtonClicked.nextSibling;
+        let productCounterNumber = parseFloat(productCounter.textContent);
+        if (productCounterNumber > 1) {
+            productCounterNumber -= 1;
+            productCounter.textContent = productCounterNumber;
+        }
+        updateProductInsideCart(event, productCounter);
+    }
+}
+
+// Actualizar producto dentro del carrito
 function updateProductInsideCart(event, productCounter) {
-    //Aqui queremos que el counter del carrito vaya a la par con el counter del producto
     const cart = event.target.closest("main").children[2];
-    let cartCounterList = cart.querySelectorAll(".counter");
-    let defaultPrice = cart.querySelectorAll(".default-price")
+    let cartProductName = cart.querySelectorAll(".counter");
+    let defaultPrice = cart.querySelectorAll(".default-price");
     let accumulatedPrices = cart.querySelectorAll(".accumulated-price");
-    
-    for (let index = 0; index < cartCounterList.length; index++) {
 
+    for (let index = 0; index < cartProductName.length; index++) {
         let defaultPriceNumber = Number(defaultPrice[index].textContent.substring(1));
-        
-        //substring extrae una porcion especifica de una cadena de texto, en este caso estamos extrayendolo todo excepto el simbolo de dolar, y convirtiendolo en tipo number
         let accumulatedPriceNumber = Number(accumulatedPrices[index].textContent.substring(1));
-
-        //el nombre del producto que tiene el contador en el menu
         let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
-        
-        //el nombre del producto que tiene el contador en el carrito
-        let cartCounterListName = cartCounterList[index].closest(".product-selected__pricing-container").previousSibling.textContent;
-        
-        //si el nombre del producto en el carrito es igual al nombre del producto en el menu,entonces...
-        if(cartCounterListName === productCounterName) {
+        let cartProductNameName = cartProductName[index].closest(".product-selected__pricing-container").previousSibling.textContent;
 
-            //asignandole el texto del contador del producto en el menu al texto del contador del producto que se seleccione en el carrito
-            cartCounterList[index].textContent = productCounter.textContent + "x";
-
+        if (cartProductNameName === productCounterName) {
+            cartProductName[index].textContent = productCounter.textContent + "x";
             const plusButtonClicked = event.target.closest(".plus-button");
             const minusButtonClicked = event.target.closest(".minus-button");
+            if (plusButtonClicked) {
+                accumulatedPrices[index].textContent = "$" + (accumulatedPriceNumber + defaultPriceNumber).toFixed(2);
+            } else if (minusButtonClicked) {
+                accumulatedPrices[index].textContent = "$" + Math.max(defaultPriceNumber, accumulatedPriceNumber - defaultPriceNumber).toFixed(2);
+            }
+        }
+    }
+}
 
-            //validando si se suma o resta el precio acumulado del producto si el usuario le da click al boton de plus o al de minus
-            if(plusButtonClicked) {
-                let sum = accumulatedPriceNumber += defaultPriceNumber                
-                
-                accumulatedPrices[index].textContent = "$" + sum.toFixed(2)
-                
-            } else if(minusButtonClicked) {
+// Remover producto del carrito
+function removeProductFromCart(event) {
+    console.log(event);
 
-                if(accumulatedPriceNumber <= defaultPriceNumber) {
-                    accumulatedPriceNumber = defaultPriceNumber;
-                } else {
-                    let rest = accumulatedPriceNumber -= defaultPriceNumber;
+    const cart = event.target.closest(".cart");
+    console.log(cart);
 
-                    accumulatedPrices[index].textContent = "$" + rest.toFixed(2);
+    const cartProductSelected = cart.children[2];
+    console.log(cartProductSelected);
+
+    const productImage = event.target.closest(".cart").previousSibling.previousSibling.children;
+    console.log(productImage);
+
+    for (let index = 0; index < productImage.length; index++) {
+        console.log(productImage[index].children[1]);
+
+        const productImageName = productImage[index].closest("li")?.children[2]?.children[1]?.textContent;
+        console.log(productImageName);
+
+        const minusButton = productImage[index].closest("li")?.children[1]?.children[0];
+        const counterMenu = productImage[index].closest("li")?.children[1]?.children[1];
+        const plusButton = productImage[index].closest("li")?.children[1]?.children[2];
+
+        const productImageStyles = productImage[index].closest("li")?.children[0];
+        const productImageButton = productImage[index].closest("li")?.children[1];
+
+        let cartProductName = cartProductSelected.querySelectorAll(".product-selected__name");
+
+        if (productImageName) {
+            for (let i = 0; i < cartProductName.length; i++) {
+                const cartProductContainer = cartProductName[i].closest(".cart__product-selected-container");
+
+                if (productImageName === cartProductName[i].textContent) {
+                    cartProductContainer.remove();
+                    minusButton.remove();
+                    counterMenu.remove();
+                    plusButton.remove();
+                    productImageStyles.classList.remove("selected-product");
+                    productImageButton.classList.remove("add-to-cart--selected");
+
+                    if (!productImage[index].querySelector(".add-cart__icon") && !productImage[index].querySelector(".add-cart__text")) {
+                        const addToCartButton = productImage[index].children[1];
+                        console.log(addToCartButton);
+                        
+                        const cartIcon = document.createElement("img");
+                        const cartText = document.createElement("span");
+                        cartIcon.src = "./icons/icon-add-to-cart.svg";
+                        cartText.textContent = "Add to Cart";
+                        cartIcon.classList.add("add-cart__icon");
+                        cartText.classList.add("add-cart__text");
+                        addToCartButton.append(cartIcon);
+                        addToCartButton.append(cartText);
+
+                        if (cart.children.length === 2) {
+                            const emptyCart = cart.children[1];
+                            emptyCart.id = "none";
+                        }
+                    }
+
+                    
                 }
             }
-        }     
+        }
     }
+
+    
+
+    
 }
