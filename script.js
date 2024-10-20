@@ -1,12 +1,10 @@
-const main = document.querySelector("main");
-const ul = document.querySelector("ul");
-
 fetch('./data.json')
     .then(response => response.json()) // Analiza el contenido JSON
     .then(data => {
         // Ahora "data" es un objeto JavaScript con los datos del JSON
         console.log(data); 
         for (const property in data) {
+            const ul = document.querySelector("ul");
             const li = document.createElement("li");
             const img = document.createElement("img");
             const productDescription = document.createElement("div");
@@ -55,7 +53,37 @@ fetch('./data.json')
     })
     .catch(error => console.error('Error al cargar el archivo JSON:', error));
 
-ul.addEventListener("click", addSelectedStyles);
+// Delegación de eventos
+document.addEventListener("DOMContentLoaded", () => {
+    const mainElement = document.querySelector("main");
+    if (mainElement) {
+        mainElement.addEventListener("click", handleMainClick);
+    } else {
+        console.error("Main element is not found on DOMContentLoaded.");
+    }
+});
+
+function handleMainClick(event) {
+    const addToCartClicked = event.target.closest(".add-remove-to-cart-container");
+    const plusButtonClicked = event.target.closest(".plus-button");
+    const minusButtonClicked = event.target.closest(".minus-button");
+    const removeButtonClicked = event.target.closest(".remove-button");
+    console.log(removeButtonClicked);
+        
+    
+    if (addToCartClicked) {
+        addSelectedStyles(event);
+    }
+
+    if (plusButtonClicked || minusButtonClicked) {
+        increaseAndDecreaseItems(event);
+    }
+
+    if (removeButtonClicked) {
+        removeProductFromCart(event);
+        quantityOfProductsInsideCart();
+    }
+}
 
 function addSelectedStyles(event) {
     console.log(event);
@@ -66,7 +94,7 @@ function addSelectedStyles(event) {
         console.log(buttonContainerClicked);
         const cartIcon = buttonContainerClicked.querySelector(".add-cart__icon");
         const cartText = buttonContainerClicked.querySelector(".add-cart__text");
-        const productImage = buttonContainerClicked.previousSibling;
+        const liContainer = buttonContainerClicked.previousSibling;
         const addToCartButton = buttonContainerClicked;
           
         /*Primero se ponen los estilos para el producto seleccionado*/
@@ -77,7 +105,7 @@ function addSelectedStyles(event) {
             cartText.remove();
 
             addToCartButton.classList.add("add-to-cart--selected");
-            productImage.classList.add("selected-product");
+            liContainer.classList.add("selected-product");
             /*creando los botones y el span*/
             const minusButton = document.createElement("button");
             const minusButtonIconWrapper = document.createElement("figure");
@@ -160,33 +188,10 @@ function addProductsToCart(productName, counter, productPrice) {
     //Añadiendo la informacion en los elementos
     counterOfProductsSelected.textContent = counter + "x";
     productNameElement.textContent = productName;
-    defaultPriceElement.textContent = productPrice;
+    defaultPriceElement.textContent = "@ " + productPrice;
     accumulatedPriceElement.textContent = productPrice;
     
-}
-
-// Delegación de eventos
-document.addEventListener("DOMContentLoaded", () => {
-    const mainElement = document.querySelector("main");
-    if (mainElement) {
-        mainElement.addEventListener("click", handleMainClick);
-    } else {
-        console.error("Main element is not found on DOMContentLoaded.");
-    }
-});
-
-function handleMainClick(event) {
-    const plusButtonClicked = event.target.closest(".plus-button");
-    const minusButtonClicked = event.target.closest(".minus-button");
-    const removeButtonClicked = event.target.closest(".remove-button");
-    
-    if (plusButtonClicked || minusButtonClicked) {
-        increaseAndDecreaseItems(event);
-    }
-
-    if (removeButtonClicked) {
-        removeProductFromCart(event);
-    }
+    quantityOfProductsInsideCart();
 }
 
 // Incrementar y decrementar items
@@ -217,18 +222,22 @@ function increaseAndDecreaseItems(event) {
 // Actualizar producto dentro del carrito
 function updateProductInsideCart(event, productCounter) {
     const cart = event.target.closest("main").children[2];
-    let cartProductName = cart.querySelectorAll(".counter");
+    let cartProductCounter = cart.querySelectorAll(".counter");
+    console.log(cartProductCounter);
     let defaultPrice = cart.querySelectorAll(".default-price");
     let accumulatedPrices = cart.querySelectorAll(".accumulated-price");
 
-    for (let index = 0; index < cartProductName.length; index++) {
-        let defaultPriceNumber = Number(defaultPrice[index].textContent.substring(1));
-        let accumulatedPriceNumber = Number(accumulatedPrices[index].textContent.substring(1));
-        let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
-        let cartProductNameName = cartProductName[index].closest(".product-selected__pricing-container").previousSibling.textContent;
+    for (let index = 0; index < cartProductCounter.length; index++) {
+        let defaultPriceNumber = Number(defaultPrice[index].textContent.substring(3));        
 
-        if (cartProductNameName === productCounterName) {
-            cartProductName[index].textContent = productCounter.textContent + "x";
+        let accumulatedPriceNumber = Number(accumulatedPrices[index].textContent.substring(1));
+
+        let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
+
+        let cartProductName = cartProductCounter[index].closest(".product-selected__pricing-container").previousSibling.textContent;
+
+        if (cartProductName === productCounterName) {
+            cartProductCounter[index].textContent = productCounter.textContent + "x";
             const plusButtonClicked = event.target.closest(".plus-button");
             const minusButtonClicked = event.target.closest(".minus-button");
             if (plusButtonClicked) {
@@ -238,6 +247,7 @@ function updateProductInsideCart(event, productCounter) {
             }
         }
     }
+    quantityOfProductsInsideCart();
 }
 
 // Remover producto del carrito
@@ -250,38 +260,39 @@ function removeProductFromCart(event) {
     const cartProductSelected = cart.children[2];
     console.log(cartProductSelected);
 
-    const productImage = event.target.closest(".cart").previousSibling.previousSibling.children;
-    console.log(productImage);
+    const liContainerItems = event.target.closest(".cart").previousSibling.previousSibling.children;
+    console.log(liContainerItems);
 
-    for (let index = 0; index < productImage.length; index++) {
-        console.log(productImage[index].children[1]);
+    for (let index = 0; index < liContainerItems.length; index++) {
+        console.log(liContainerItems[index].children[1]);
 
-        const productImageName = productImage[index].closest("li")?.children[2]?.children[1]?.textContent;
-        console.log(productImageName);
+        const liContainerName = liContainerItems[index].closest("li")?.children[2]?.children[1]?.textContent;
+        console.log(liContainerName);
 
-        const minusButton = productImage[index].closest("li")?.children[1]?.children[0];
-        const counterMenu = productImage[index].closest("li")?.children[1]?.children[1];
-        const plusButton = productImage[index].closest("li")?.children[1]?.children[2];
+        const minusButton = liContainerItems[index].closest("li")?.children[1]?.children[0];
+        const counterMenu = liContainerItems[index].closest("li")?.children[1]?.children[1];
+        const plusButton = liContainerItems[index].closest("li")?.children[1]?.children[2];
 
-        const productImageStyles = productImage[index].closest("li")?.children[0];
-        const productImageButton = productImage[index].closest("li")?.children[1];
+        const liContainerStyles = liContainerItems[index].closest("li")?.children[0];
+        const liContainerButton = liContainerItems[index].closest("li")?.children[1];
 
-        let cartProductName = cartProductSelected.querySelectorAll(".product-selected__name");
+        let cartProductCounter = cartProductSelected.querySelectorAll(".product-selected__name");
 
-        if (productImageName) {
-            for (let i = 0; i < cartProductName.length; i++) {
-                const cartProductContainer = cartProductName[i].closest(".cart__product-selected-container");
+        if (liContainerName) {
+            for (let i = 0; i < cartProductCounter.length; i++) {
+                const cartProductContainer = cartProductCounter[i].closest(".cart__product-selected-container");
+                console.log(cartProductContainer);
 
-                if (productImageName === cartProductName[i].textContent) {
+                if (liContainerName === cartProductCounter[i].textContent) {
                     cartProductContainer.remove();
                     minusButton.remove();
                     counterMenu.remove();
                     plusButton.remove();
-                    productImageStyles.classList.remove("selected-product");
-                    productImageButton.classList.remove("add-to-cart--selected");
+                    liContainerStyles.classList.remove("selected-product");
+                    liContainerButton.classList.remove("add-to-cart--selected");
 
-                    if (!productImage[index].querySelector(".add-cart__icon") && !productImage[index].querySelector(".add-cart__text")) {
-                        const addToCartButton = productImage[index].children[1];
+                    if (!liContainerItems[index].querySelector(".add-cart__icon") && !liContainerItems[index].querySelector(".add-cart__text")) {
+                        const addToCartButton = liContainerItems[index].children[1];
                         console.log(addToCartButton);
                         
                         const cartIcon = document.createElement("img");
@@ -297,15 +308,43 @@ function removeProductFromCart(event) {
                             const emptyCart = cart.children[1];
                             emptyCart.id = "none";
                         }
-                    }
-
-                    
+                    }    
                 }
             }
         }
     }
+}
 
-    
+function quantityOfProductsInsideCart() {
+    const quantityProductsElement = document.querySelector(".quantity-products");
+    console.log(quantityProductsElement);
 
+    const cart = document.querySelector(".cart");
+    console.log(cart);
+
+    const cartCounterItems = document.querySelectorAll(".cart__product-selected-container");
+    console.log(cartCounterItems);
+
+    let totalQuantity = 0;
     
+    for (let index = 0; index < cartCounterItems.length; index++) {    
+        let cartCounter = cartCounterItems[index].children[1].children[0].textContent;
+        console.log(cartCounter.length);
+
+        let cartCounterNumber = Number(cartCounter[0]);
+        console.log(cartCounterNumber);
+
+        if (cartCounter.length > 2) {
+            cartCounterNumber = Number(cartCounter.substring(0,2));
+            totalQuantity += cartCounterNumber;
+            quantityProductsElement.textContent = totalQuantity;
+        } else {
+            totalQuantity += cartCounterNumber;        
+            quantityProductsElement.textContent = totalQuantity;
+        }
+    }
+    
+    if(cartCounterItems.length === 0) {
+        quantityProductsElement.textContent = 0;
+    }
 }
