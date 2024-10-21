@@ -96,7 +96,7 @@ function addSelectedStyles(event) {
         const cartText = buttonContainerClicked.querySelector(".add-cart__text");
         const liContainer = buttonContainerClicked.previousSibling;
         const addToCartButton = buttonContainerClicked;
-          
+        
         /*Primero se ponen los estilos para el producto seleccionado*/
         /*Eliminando los elementos que lleva por defecto el add to cart*/
         
@@ -161,8 +161,10 @@ function addProductsToCart(productName, counter, productPrice) {
     const defaultPriceElement = document.createElement("span");
     const accumulatedPriceElement = document.createElement("span");
     const buttonToRemoveProduct = document.createElement("button");
-    const iconInsideButton = document.createElement("img"); 
-
+    const iconInsideButton = document.createElement("img");
+    let orderTotalContainer = document.querySelector(".order-total-container");
+    console.log(orderTotalContainer);
+    
     //Añadiendo las clases de los estilos a los elementos
     emptyCart.id = "inactive"
     productSelectedContainer.classList.add("cart__product-selected-container");
@@ -175,21 +177,58 @@ function addProductsToCart(productName, counter, productPrice) {
     iconInsideButton.classList.add
 
     //Anidando los elementos dentro de los contenedores
-    cart.append(productSelectedContainer);
-    productSelectedContainer.append(productNameElement);
-    productSelectedContainer.append(pricingContainer);
-    pricingContainer.append(counterOfProductsSelected);
-    pricingContainer.append(defaultPriceElement);
-    pricingContainer.append(accumulatedPriceElement);
-    pricingContainer.append(buttonToRemoveProduct);
+    cart.insertBefore(productSelectedContainer, cart.children[2]);
+    productSelectedContainer.append(productNameElement, pricingContainer);
+    pricingContainer.append(counterOfProductsSelected, defaultPriceElement, accumulatedPriceElement, buttonToRemoveProduct);
     iconInsideButton.src = "./icons/icon-remove-item.svg";
     buttonToRemoveProduct.append(iconInsideButton);
 
     //Añadiendo la informacion en los elementos
     counterOfProductsSelected.textContent = counter + "x";
     productNameElement.textContent = productName;
-    defaultPriceElement.textContent = "@ " + productPrice;
+    defaultPriceElement.textContent = "@" + " " + productPrice;
     accumulatedPriceElement.textContent = productPrice;
+
+    if(!orderTotalContainer) {
+        //ORDER TOTAL
+        orderTotalContainer = document.createElement("div");
+        const orderTotalParagraph = document.createElement("p");
+        const orderTotalResult = document.createElement("p");
+
+        orderTotalContainer.classList.add("order-total-container");
+        orderTotalParagraph.textContent = "Order Total";
+        orderTotalParagraph.classList.add("order-total-paragraph");
+        orderTotalResult.textContent = `$1`;
+        orderTotalResult.classList.add("order-total-result");
+
+        cart.insertBefore(orderTotalContainer, cart.children[3]);
+        orderTotalContainer.append(orderTotalParagraph, orderTotalResult);
+
+        //CARBON NEUTRAL DELIVERY
+        const carbonNeutralContainer = document.createElement("div");
+        const carbonNeutralIcon = document.createElement("img");
+        const carbonNeutralParagraph = document.createElement("p");
+
+        carbonNeutralContainer.classList.add("carbon-neutral-container");
+        carbonNeutralIcon.src = "./icons/icon-carbon-neutral.svg";
+        carbonNeutralIcon.alt = "carbon neutral icon";
+        carbonNeutralParagraph.innerHTML = "This is a <span>carbon-neutral</span> delivery";
+        carbonNeutralParagraph.classList.add("carbon-neutral-paragraph");
+
+        cart.insertBefore(carbonNeutralContainer, cart.children[4]);
+        carbonNeutralContainer.append(carbonNeutralIcon, carbonNeutralParagraph);
+
+
+        //CONFIRM ORDER
+        const confirmOrderButton = document.createElement("button");
+
+        confirmOrderButton.classList.add("confirm-order-button");
+        confirmOrderButton.textContent = "Confirm Order";
+
+        cart.insertBefore(confirmOrderButton, cart.children[5]);
+        console.log(cart.children.length);
+        
+    }
     
     quantityOfProductsInsideCart();
 }
@@ -277,6 +316,8 @@ function removeProductFromCart(event) {
         const liContainerButton = liContainerItems[index].closest("li")?.children[1];
 
         let cartProductCounter = cartProductSelected.querySelectorAll(".product-selected__name");
+        console.log(cartProductCounter);
+        
 
         if (liContainerName) {
             for (let i = 0; i < cartProductCounter.length; i++) {
@@ -304,9 +345,17 @@ function removeProductFromCart(event) {
                         addToCartButton.append(cartIcon);
                         addToCartButton.append(cartText);
 
-                        if (cart.children.length === 2) {
+                        if (cart.children.length < 6) {
                             const emptyCart = cart.children[1];
+                            const orderTotalContainer = cart.querySelector(".order-total-container");
+                            const carbonNeutralContainer = cart.querySelector(".carbon-neutral-container");
+                            const confirmOrderButton = cart.querySelector(".confirm-order-button");
+                            console.log({orderTotalContainer, carbonNeutralContainer, confirmOrderButton});
+                            
                             emptyCart.id = "none";
+                            orderTotalContainer.remove();
+                            carbonNeutralContainer.remove();
+                            confirmOrderButton.remove();
                         }
                     }    
                 }
@@ -317,22 +366,12 @@ function removeProductFromCart(event) {
 
 function quantityOfProductsInsideCart() {
     const quantityProductsElement = document.querySelector(".quantity-products");
-    console.log(quantityProductsElement);
-
-    const cart = document.querySelector(".cart");
-    console.log(cart);
-
     const cartCounterItems = document.querySelectorAll(".cart__product-selected-container");
-    console.log(cartCounterItems);
-
     let totalQuantity = 0;
     
     for (let index = 0; index < cartCounterItems.length; index++) {    
         let cartCounter = cartCounterItems[index].children[1].children[0].textContent;
-        console.log(cartCounter.length);
-
         let cartCounterNumber = Number(cartCounter[0]);
-        console.log(cartCounterNumber);
 
         if (cartCounter.length > 2) {
             cartCounterNumber = Number(cartCounter.substring(0,2));
@@ -343,7 +382,7 @@ function quantityOfProductsInsideCart() {
             quantityProductsElement.textContent = totalQuantity;
         }
     }
-    
+
     if(cartCounterItems.length === 0) {
         quantityProductsElement.textContent = 0;
     }
