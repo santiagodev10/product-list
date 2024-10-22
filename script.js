@@ -196,7 +196,7 @@ function addProductsToCart(productName, counter, productPrice) {
         const orderTotalParagraph = document.createElement("p");
         const orderTotalResult = document.createElement("p");
 
-        orderTotalContainer.classList.add("order-total-container");
+        orderTotalContainer.classList.add("cart__order-total-container");
         orderTotalParagraph.textContent = "Order Total";
         orderTotalParagraph.classList.add("order-total-paragraph");
         orderTotalResult.classList.add("order-total-result");
@@ -209,7 +209,7 @@ function addProductsToCart(productName, counter, productPrice) {
         const carbonNeutralIcon = document.createElement("img");
         const carbonNeutralParagraph = document.createElement("p");
 
-        carbonNeutralContainer.classList.add("carbon-neutral-container");
+        carbonNeutralContainer.classList.add("cart__carbon-neutral-container");
         carbonNeutralIcon.src = "./icons/icon-carbon-neutral.svg";
         carbonNeutralIcon.alt = "carbon neutral icon";
         carbonNeutralParagraph.innerHTML = "This is a <span>carbon-neutral</span> delivery";
@@ -222,7 +222,8 @@ function addProductsToCart(productName, counter, productPrice) {
         //CONFIRM ORDER
         const confirmOrderButton = document.createElement("button");
 
-        confirmOrderButton.classList.add("confirm-order-button");
+        confirmOrderButton.classList.add("cart__confirm-order");
+        confirmOrderButton.classList.add("order-button");
         confirmOrderButton.textContent = "Confirm Order";
 
         cart.insertBefore(confirmOrderButton, cart.children[5]);
@@ -407,4 +408,8 @@ function totalOrderPrice() {
         totalPrice += accumulatedPricesNumber;
         orderTotalElement.textContent = `$${totalPrice.toFixed(2)}`;
     }
+}
+
+function modalWindow() {
+    //Aqui vamos a crear todos los elementos del modal, añadiendole sus estilos respectivos, esta funcion se tiene que ejecutar cuando se haga click en el boton confirm order
 }
