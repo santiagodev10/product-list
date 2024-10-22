@@ -73,15 +73,18 @@ function handleMainClick(event) {
     
     if (addToCartClicked) {
         addSelectedStyles(event);
+        totalOrderPrice();
     }
 
     if (plusButtonClicked || minusButtonClicked) {
         increaseAndDecreaseItems(event);
+        totalOrderPrice();
     }
 
     if (removeButtonClicked) {
         removeProductFromCart(event);
         quantityOfProductsInsideCart();
+        totalOrderPrice();
     }
 }
 
@@ -136,9 +139,7 @@ function addSelectedStyles(event) {
             productCounterElement.textContent = 1;
             productCounterElement.classList.add("product-counter");
             /*añadiendo los botones y el span adentro del contenedor*/
-            addToCartButton.appendChild(minusButton);
-            addToCartButton.appendChild(productCounterElement);
-            addToCartButton.appendChild(plusButton);
+            addToCartButton.append(minusButton, productCounterElement, plusButton);
 
             //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
             const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
@@ -198,7 +199,6 @@ function addProductsToCart(productName, counter, productPrice) {
         orderTotalContainer.classList.add("order-total-container");
         orderTotalParagraph.textContent = "Order Total";
         orderTotalParagraph.classList.add("order-total-paragraph");
-        orderTotalResult.textContent = `$1`;
         orderTotalResult.classList.add("order-total-result");
 
         cart.insertBefore(orderTotalContainer, cart.children[3]);
@@ -385,5 +385,26 @@ function quantityOfProductsInsideCart() {
 
     if(cartCounterItems.length === 0) {
         quantityProductsElement.textContent = 0;
+    }
+}
+
+function totalOrderPrice() {
+    const orderTotalElement = document.querySelector(".order-total-result");
+    console.log(orderTotalElement);
+
+    const accumulatedPriceItems = document.querySelectorAll(".accumulated-price");
+    console.log(accumulatedPriceItems);
+
+    let totalPrice = 0;
+
+    for (let index = 0; index < accumulatedPriceItems.length; index++) {
+        let accumulatedPrices = accumulatedPriceItems[index].textContent;
+        console.log(accumulatedPrices);
+
+        let accumulatedPricesNumber = Number(accumulatedPrices.substring(1));
+        console.log(accumulatedPricesNumber);
+        
+        totalPrice += accumulatedPricesNumber;
+        orderTotalElement.textContent = `$${totalPrice.toFixed(2)}`;
     }
 }
