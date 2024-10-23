@@ -107,7 +107,7 @@ ul li .add-remove-to-cart-container {
 }
 
 .cart {
-    width: 92%;
+    width: 100%;
     max-width: 300px;
     border: solid 1px white;
     padding: 10px 20px 30px;
@@ -289,13 +289,21 @@ ul li .add-to-cart--selected {
 }
 
 .modal-window {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-card {
     width: 100%;
-    max-width: 320px;
+    position: relative;
+    top: 15%;
+    max-width: 375px;
     border: 1px solid white;
     padding: 30px 20px 30px;
     border-radius: 10px;
@@ -333,12 +341,13 @@ ul li .add-to-cart--selected {
     grid-template-columns: repeat(8, 15px);
     grid-template-rows: repeat(3, auto);
     align-items: center;
+    justify-content: space-evenly;
     column-gap: 15px;
     border-bottom: 1px solid rgb(210, 210, 210);
     padding-bottom: 12px;
 }
 
-.products-section__product img {
+.product__product-image {
     width: 100%;
     grid-column: 1/3;
     grid-row: 1/3;
@@ -348,14 +357,14 @@ ul li .add-to-cart--selected {
 .product__name {
     grid-column: 3/8;
     grid-row: 1;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
 }
 
 .product__counter {
     grid-column: 3;
     grid-row: 2;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: rgb(190 95 75);
 }
@@ -363,7 +372,7 @@ ul li .add-to-cart--selected {
 .product__default-price {
     grid-column: 4/6;
     grid-row: 2;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 400;
     color: var(--Rose-500);
 }
@@ -371,7 +380,7 @@ ul li .add-to-cart--selected {
 .product__accumulated-price {
     grid-column: 7;
     grid-row: 1/6;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--Rose-900);
 }

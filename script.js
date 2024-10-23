@@ -68,8 +68,9 @@ function handleMainClick(event) {
     const plusButtonClicked = event.target.closest(".plus-button");
     const minusButtonClicked = event.target.closest(".minus-button");
     const removeButtonClicked = event.target.closest(".remove-button");
+    const confirmOrderClicked = event.target.closest(".cart__confirm-order");
     console.log(removeButtonClicked);
-        
+    console.log(confirmOrderClicked);
     
     if (addToCartClicked) {
         addSelectedStyles(event);
@@ -85,6 +86,10 @@ function handleMainClick(event) {
         removeProductFromCart(event);
         quantityOfProductsInsideCart();
         totalOrderPrice();
+    }
+
+    if (confirmOrderClicked) {
+        openModalWindow();
     }
 }
 
@@ -155,7 +160,7 @@ function addProductsToCart(productName, counter, productPrice) {
     //Primero creamos los elementos que van a recibir la informacion
     const cart = document.querySelector(".cart");
     const emptyCart = document.querySelector(".cart__empty");
-    const productSelectedContainer = document.createElement("div");
+    const productContainerInCart = document.createElement("div");
     const productNameElement = document.createElement("p");
     const pricingContainer = document.createElement("div");
     const counterOfProductsSelected = document.createElement("span");
@@ -163,12 +168,13 @@ function addProductsToCart(productName, counter, productPrice) {
     const accumulatedPriceElement = document.createElement("span");
     const buttonToRemoveProduct = document.createElement("button");
     const iconInsideButton = document.createElement("img");
-    let orderTotalContainer = document.querySelector(".order-total-container");
+    let orderTotalContainer = document.querySelector(".cart__order-total-container");
     console.log(orderTotalContainer);
     
     //Añadiendo las clases de los estilos a los elementos
     emptyCart.id = "inactive"
-    productSelectedContainer.classList.add("cart__product-selected-container");
+    // emptyCart.remove()
+    productContainerInCart.classList.add("cart__product-selected-container");
     productNameElement.classList.add("product-selected__name");
     pricingContainer.classList.add("product-selected__pricing-container");
     counterOfProductsSelected.classList.add("counter");
@@ -178,8 +184,8 @@ function addProductsToCart(productName, counter, productPrice) {
     iconInsideButton.classList.add
 
     //Anidando los elementos dentro de los contenedores
-    cart.insertBefore(productSelectedContainer, cart.children[2]);
-    productSelectedContainer.append(productNameElement, pricingContainer);
+    cart.insertBefore(productContainerInCart, cart.children[1]);
+    productContainerInCart.append(productNameElement, pricingContainer);
     pricingContainer.append(counterOfProductsSelected, defaultPriceElement, accumulatedPriceElement, buttonToRemoveProduct);
     iconInsideButton.src = "./icons/icon-remove-item.svg";
     buttonToRemoveProduct.append(iconInsideButton);
@@ -297,7 +303,7 @@ function removeProductFromCart(event) {
     const cart = event.target.closest(".cart");
     console.log(cart);
 
-    const cartProductSelected = cart.children[2];
+    const cartProductSelected = cart.children[1];
     console.log(cartProductSelected);
 
     const liContainerItems = event.target.closest(".cart").previousSibling.previousSibling.children;
@@ -347,10 +353,11 @@ function removeProductFromCart(event) {
                         addToCartButton.append(cartText);
 
                         if (cart.children.length < 6) {
-                            const emptyCart = cart.children[1];
-                            const orderTotalContainer = cart.querySelector(".order-total-container");
-                            const carbonNeutralContainer = cart.querySelector(".carbon-neutral-container");
-                            const confirmOrderButton = cart.querySelector(".confirm-order-button");
+                            const emptyCart = cart.querySelector(".cart__empty");
+                            console.log(emptyCart);
+                            const orderTotalContainer = cart.querySelector(".cart__order-total-container");
+                            const carbonNeutralContainer = cart.querySelector(".cart__carbon-neutral-container");
+                            const confirmOrderButton = cart.querySelector(".cart__confirm-order");
                             console.log({orderTotalContainer, carbonNeutralContainer, confirmOrderButton});
                             
                             emptyCart.id = "none";
@@ -410,6 +417,97 @@ function totalOrderPrice() {
     }
 }
 
-function modalWindow() {
-    //Aqui vamos a crear todos los elementos del modal, añadiendole sus estilos respectivos, esta funcion se tiene que ejecutar cuando se haga click en el boton confirm order
+function openModalWindow() {
+    const body = document.querySelector("body");
+    const cart = document.querySelector(".cart");
+    const productContainerInCart = cart.querySelectorAll(".cart__product-selected-container");
+    console.log(productContainerInCart);
+    const modalWindowOpen = document.querySelector(".modal-window");
+
+    if (!modalWindowOpen) {
+        //Creando elementos
+        const modalWindow = document.createElement("div");
+        const modalCard = document.createElement("section");
+        const confirmedImageElement = document.createElement("img");
+        const orderConfirmedTitle = document.createElement("h2");
+        const orderConfirmedSubtitle = document.createElement("p");
+        //Products section
+        const productsSectionContainer = document.createElement("div");
+        //Hay que hacer una validacion para que cree un contenedor del producto por cada contenedor del producto que haya en el carrito
+        //DE AQUI
+        for (let index = 0; index < productContainerInCart.length; index++) {
+            console.log(productContainerInCart[index]);
+
+            const productNameInCart = productContainerInCart[index].querySelector(".product-selected__name").textContent;
+            console.log(productNameInCart);
+            
+            const pricingContainer = productContainerInCart[index].querySelector(".product-selected__pricing-container");
+            console.log(pricingContainer);
+            
+            const counterInCart = pricingContainer.querySelector(".counter").textContent;
+            const defaultPriceInCart = pricingContainer.querySelector(".default-price").textContent;
+            const accumulatedPriceInCart = pricingContainer.querySelector(".accumulated-price").textContent;
+            console.log({counterInCart, defaultPriceInCart, accumulatedPriceInCart});
+            
+            const productContainer = document.createElement("div");
+            const productImage = document.createElement("img");
+            const productName = document.createElement("p");
+            const productCounter = document.createElement("span");
+            const productDefaultPrice = document.createElement("span");
+            const productAccumulatedPrice = document.createElement("span");
+
+            productsSectionContainer.classList.add("modal-card__products-section");
+            productContainer.classList.add("products-section__product");
+            productImage.src = "./product-list-with-cart-main/assets/images/image-tiramisu-thumbnail.jpg";
+            productImage.alt = "product-image";
+            productImage.classList.add("product__product-image");
+            productName.classList.add("product__name");
+            productName.textContent = productNameInCart;
+            productCounter.classList.add("product__counter");
+            productCounter.textContent = counterInCart;
+            productDefaultPrice.classList.add("product__default-price");
+            productDefaultPrice.textContent = defaultPriceInCart;
+            productAccumulatedPrice.classList.add("product__accumulated-price");
+            productAccumulatedPrice.textContent = accumulatedPriceInCart;
+
+            productsSectionContainer.append(productContainer);
+            productContainer.append(productImage, productName, productCounter, productDefaultPrice, productAccumulatedPrice);
+        }
+        //HASTA AQUI
+        const orderTotalResultInCart = document.querySelector(".order-total-result").textContent;
+
+        const orderTotalContainer = document.createElement("div");
+        const orderTotalParagraph = document.createElement("p");
+        const orderTotalResult = document.createElement("p");
+        
+        const startNewOrderButton = document.createElement("button");
+
+    //Añadiendo estilos a los elementos
+        modalWindow.classList.add("modal-window");
+        modalCard.classList.add("modal-card");
+        confirmedImageElement.src = "./icons/icon-order-confirmed.svg";
+        confirmedImageElement.alt = "order-confirmed-icon";
+        confirmedImageElement.classList.add("modal-card__confirmed-image");
+        orderConfirmedTitle.classList.add("modal-card__title");
+        orderConfirmedTitle.textContent = "Order Confirmed";
+        orderConfirmedSubtitle.classList.add("modal-card__subtitle");
+        orderConfirmedSubtitle.textContent = "We hope you enjoy your food!";
+
+        orderTotalContainer.classList.add("products-section__order-total");
+        orderTotalParagraph.classList.add("order-total-paragraph");
+        orderTotalParagraph.textContent = "Order Total";
+        orderTotalResult.classList.add("order-total-result");
+        orderTotalResult.textContent = orderTotalResultInCart;
+
+        startNewOrderButton.classList.add("modal-card__new-order-button", "order-button");
+        startNewOrderButton.textContent = "Start New Order";
+
+    //Posicionando elementos
+        body.append(modalWindow);
+        modalWindow.append(modalCard);
+        modalCard.append(confirmedImageElement, orderConfirmedTitle, orderConfirmedSubtitle, productsSectionContainer, startNewOrderButton);
+
+        productsSectionContainer.append(orderTotalContainer);
+        orderTotalContainer.append(orderTotalParagraph, orderTotalResult);
+    }
 }
