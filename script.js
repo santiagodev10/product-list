@@ -56,19 +56,21 @@ fetch('./data.json')
 // Delegación de eventos
 document.addEventListener("DOMContentLoaded", () => {
     const mainElement = document.querySelector("main");
+    
     if (mainElement) {
-        mainElement.addEventListener("click", handleMainClick);
+        mainElement.addEventListener("click", handleClickEvents);
     } else {
         console.error("Main element is not found on DOMContentLoaded.");
     }
 });
 
-function handleMainClick(event) {
+function handleClickEvents(event) {
     const addToCartClicked = event.target.closest(".add-remove-to-cart-container");
     const plusButtonClicked = event.target.closest(".plus-button");
     const minusButtonClicked = event.target.closest(".minus-button");
     const removeButtonClicked = event.target.closest(".remove-button");
     const confirmOrderClicked = event.target.closest(".cart__confirm-order");
+    
     console.log(removeButtonClicked);
     console.log(confirmOrderClicked);
     
@@ -509,5 +511,14 @@ function openModalWindow() {
 
         productsSectionContainer.append(orderTotalContainer);
         orderTotalContainer.append(orderTotalParagraph, orderTotalResult);
+
+        const newOrderButton = document.querySelector(".modal-card__new-order-button");
+        console.log(newOrderButton);
+
+        if(newOrderButton.addEventListener("click", startNewOrder));
     }
+}
+
+function startNewOrder() {
+    location.reload()
 }
