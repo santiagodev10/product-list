@@ -1,3 +1,5 @@
+let jsonData = null;
+
 fetch('./data.json')
     .then(response => response.json()) // Analiza el contenido JSON
     .then(data => {
@@ -48,6 +50,8 @@ fetch('./data.json')
             
             buttonContainer.append(iconCart);
             buttonContainer.append(addToCartText);
+
+            jsonData = data;
         }
         // ... y así sucesivamente
     })
@@ -457,10 +461,21 @@ function openModalWindow() {
             const productCounter = document.createElement("span");
             const productDefaultPrice = document.createElement("span");
             const productAccumulatedPrice = document.createElement("span");
+            const jsonData2 = jsonData;
+            console.log(jsonData2);
+
+            for(const data in jsonData2)  {
+                console.log(jsonData2[data].name);
+            
+                const productNameInJson = jsonData2[data].name;
+
+                if(productNameInJson === productNameInCart) {
+                    productImage.src = jsonData2[data].image.thumbnail;
+                }
+            }
 
             productsSectionContainer.classList.add("modal-card__products-section");
             productContainer.classList.add("products-section__product");
-            productImage.src = "./product-list-with-cart-main/assets/images/image-tiramisu-thumbnail.jpg";
             productImage.alt = "product-image";
             productImage.classList.add("product__product-image");
             productName.classList.add("product__name");
