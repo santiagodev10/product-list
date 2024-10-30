@@ -1,9 +1,9 @@
 let jsonData = null;
 
 fetch('./data.json')
-    .then(response => response.json()) // Analiza el contenido JSON
+    .then(response => response.json()) // Analyzes JSON content
     .then(data => {
-        // Ahora "data" es un objeto JavaScript con los datos del JSON
+        // Now "data" is a JavaScript object with the data from the JSON
         console.log(data); 
         for (const property in data) {
             const ul = document.querySelector("ul");
@@ -17,10 +17,25 @@ fetch('./data.json')
             const iconCart = document.createElement("img");
             const addToCartText = document.createElement("span");
 
-            //anidando elementos segun la estructura que ya teniamos hecha, poniendole las clases de los estilos y añadiendoles la informacion respectiva del json a cada elemento
+            // Nesting elements following the structure that we have, putting them style classes y adding the respective information from the JSON to each element
             ul.appendChild(li);
             li.append(img);
-            img.src = data[property].image.mobile;
+
+            // Fuction to update the image with the size of the screen
+            const updateImage = () => {
+                if (window.matchMedia("(min-width: 580px)").matches) {
+                    img.src = data[property].image.desktop;
+                } else {
+                    img.src = data[property].image.mobile;
+                }
+            };
+
+            // Execute the fuction when the page is load
+            updateImage();
+
+            // Listening changes when the size of the viewport shifts
+            window.addEventListener('resize', updateImage);
+            
             img.alt = "product-image";
             img.classList.add("product-image");
             li.append(buttonContainer);
@@ -35,7 +50,7 @@ fetch('./data.json')
             productDescriptionName.classList.add("product-description__name");
 
             const priceJson = data[property].price.toFixed(2);
-            productDescriptionPrice.textContent = "$" + priceJson;
+            productDescriptionPrice.textContent = `$${priceJson}`;
             productDescriptionPrice.classList.add("product-description__price");
 
             productDescription.append(productDescriptionCategory);
@@ -53,11 +68,10 @@ fetch('./data.json')
 
             jsonData = data;
         }
-        // ... y así sucesivamente
     })
-    .catch(error => console.error('Error al cargar el archivo JSON:', error));
+    .catch(error => console.error('Fail to load JSON file:', error));
 
-// Delegación de eventos
+// Event delegation
 document.addEventListener("DOMContentLoaded", () => {
     const mainElement = document.querySelector("main");
     
@@ -74,9 +88,6 @@ function handleClickEvents(event) {
     const minusButtonClicked = event.target.closest(".minus-button");
     const removeButtonClicked = event.target.closest(".remove-button");
     const confirmOrderClicked = event.target.closest(".cart__confirm-order");
-    
-    console.log(removeButtonClicked);
-    console.log(confirmOrderClicked);
     
     if (addToCartClicked) {
         addSelectedStyles(event);
@@ -424,7 +435,7 @@ function totalOrderPrice() {
 }
 
 function openModalWindow() {
-    const body = document.querySelector("body");
+    const main = document.querySelector("main");
     const cart = document.querySelector(".cart");
     const productContainerInCart = cart.querySelectorAll(".cart__product-selected-container");
     console.log(productContainerInCart);
@@ -461,16 +472,15 @@ function openModalWindow() {
             const productCounter = document.createElement("span");
             const productDefaultPrice = document.createElement("span");
             const productAccumulatedPrice = document.createElement("span");
-            const jsonData2 = jsonData;
-            console.log(jsonData2);
+            console.log(jsonData);
 
-            for(const data in jsonData2)  {
-                console.log(jsonData2[data].name);
+            for(const data in jsonData)  {
+                console.log(jsonData[data].name);
             
-                const productNameInJson = jsonData2[data].name;
+                const productNameInJson = jsonData[data].name;
 
                 if(productNameInJson === productNameInCart) {
-                    productImage.src = jsonData2[data].image.thumbnail;
+                    productImage.src = jsonData[data].image.thumbnail;
                 }
             }
 
@@ -520,7 +530,7 @@ function openModalWindow() {
         startNewOrderButton.textContent = "Start New Order";
 
     //Posicionando elementos
-        body.append(modalWindow);
+        main.after(modalWindow);
         modalWindow.append(modalCard);
         modalCard.append(confirmedImageElement, orderConfirmedTitle, orderConfirmedSubtitle, productsSectionContainer, startNewOrderButton);
 
