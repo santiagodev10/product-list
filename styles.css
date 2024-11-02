@@ -493,6 +493,11 @@ ul li .add-to-cart--selected {
         margin-top: 40px;
     }
 
+    .product-description .product-description__name,
+    .product-description .product-description__price {
+        font-size: 1.4rem;
+    }
+
     .cart {
         grid-column: 9/14;
         grid-row: 1;

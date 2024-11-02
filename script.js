@@ -146,7 +146,6 @@ function addSelectedStyles(event) {
             plusButtonIcon.classList.add("icons");
             plusButton.append(plusButtonIconWrapper);
             plusButtonIconWrapper.append(plusButtonIcon);
-            console.log(productCounterElement.textContent);
             
             productCounterElement.textContent = 1;
             productCounterElement.classList.add("product-counter");
@@ -207,7 +206,6 @@ function addProductsToCart(productName, counter, productPrice) {
 
     // Validates if the orderTotalContainerModal DON’T exist, if that’s true then creates it.
     let orderTotalContainerModal = document.querySelector(".cart__order-total-container");
-    console.log(orderTotalContainerModal);
 
     if(!orderTotalContainerModal) {
         //ORDER TOTAL
