@@ -28,7 +28,7 @@ Users should be able to:
 
 ### Screenshot
 
-![Product-list](./Screenshot_1.jpg)
+![Product-list](https://i.postimg.cc/SN7ZnHbp/Screenshot-1.jpg)
 
 ### Links
 
