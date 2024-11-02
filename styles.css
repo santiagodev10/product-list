@@ -125,10 +125,6 @@ ul li .add-remove-to-cart-container {
     color: var(--Rose-900);
 }
 
-/* .add-cart__text:hover {
-    color: rgb(190 95 75);
-} */
-
 .cart {
     width: 100%;
     height: max-content;
@@ -316,6 +312,10 @@ ul li .add-to-cart--selected {
     font-family: "Red Hat Text", sans-serif;
     font-weight: 500;
     cursor: pointer;
+}
+
+.order-button:hover {
+    background-color: var(--Rose-900);
 }
 
 .modal-window {

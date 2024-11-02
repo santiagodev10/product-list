@@ -1,10 +1,9 @@
 let jsonData = null;
 
 fetch('./data.json')
-    .then(response => response.json()) // Analyzes JSON content
+    .then(response => response.json())
     .then(data => {
         // Now "data" is a JavaScript object with the data from the JSON
-        console.log(data); 
         for (const property in data) {
             const ul = document.querySelector("ul");
             const li = document.createElement("li");
@@ -17,7 +16,6 @@ fetch('./data.json')
             const iconCart = document.createElement("img");
             const addToCartText = document.createElement("span");
 
-            // Nesting elements following the structure that we have, putting them style classes y adding the respective information from the JSON to each element
             ul.appendChild(li);
             li.append(img);
 
@@ -30,10 +28,9 @@ fetch('./data.json')
                 }
             };
 
-            // Execute the fuction when the page is load
+            // Execute the fuction when the page is loaded
             updateImage();
 
-            // Listening changes when the size of the viewport shifts
             window.addEventListener('resize', updateImage);
             
             img.alt = "product-image";
@@ -66,6 +63,7 @@ fetch('./data.json')
             buttonContainer.append(iconCart);
             buttonContainer.append(addToCartText);
 
+            // Assigning the data from the json to jsonData, since jsonData is a global variable we can access to it and the data of the json from every place across the script without making a new fetch call
             jsonData = data;
         }
     })
@@ -111,27 +109,20 @@ function handleClickEvents(event) {
 }
 
 function addSelectedStyles(event) {
-    console.log(event);
-    //seleccionando elementos del DOM
     const buttonContainerClicked = event.target.closest(".add-remove-to-cart-container");
-    //validando cual de los li fue seleccionado    
+    
     if(buttonContainerClicked) {
-        console.log(buttonContainerClicked);
         const cartIcon = buttonContainerClicked.querySelector(".add-cart__icon");
         const cartText = buttonContainerClicked.querySelector(".add-cart__text");
-        const liContainer = buttonContainerClicked.previousSibling;
-        const addToCartButton = buttonContainerClicked;
-        
-        /*Primero se ponen los estilos para el producto seleccionado*/
-        /*Eliminando los elementos que lleva por defecto el add to cart*/
+        const productImageSelected = buttonContainerClicked.previousSibling;
+        const addToCartButtonSelected = buttonContainerClicked;
         
         if(cartIcon && cartText) {
             cartIcon.remove();
             cartText.remove();
 
-            addToCartButton.classList.add("add-to-cart--selected");
-            liContainer.classList.add("selected-product");
-            /*creando los botones y el span*/
+            addToCartButtonSelected.classList.add("add-to-cart--selected");
+            productImageSelected.classList.add("selected-product");
             const minusButton = document.createElement("button");
             const minusButtonIconWrapper = document.createElement("figure");
             const minusButtonIcon = document.createElement("img");
@@ -139,7 +130,7 @@ function addSelectedStyles(event) {
             const plusButtonIconWrapper = document.createElement("figure");
             const plusButtonIcon = document.createElement("img");
             const productCounterElement = document.createElement("span");
-            /*añadiendo estilos a los botones y al span*/
+
             minusButton.classList.add("buttons");
             minusButton.classList.add("minus-button")
             minusButtonIconWrapper.classList.add("wrapper");
@@ -157,16 +148,14 @@ function addSelectedStyles(event) {
             plusButtonIconWrapper.append(plusButtonIcon);
             console.log(productCounterElement.textContent);
             
-            
             productCounterElement.textContent = 1;
             productCounterElement.classList.add("product-counter");
-            /*añadiendo los botones y el span adentro del contenedor*/
-            addToCartButton.append(minusButton, productCounterElement, plusButton);
+            addToCartButtonSelected.append(minusButton, productCounterElement, plusButton);
 
-            //aqui tengo que detectar cual product category se esta haciendo click, aprovechando que el addeventlistener esta puesto en el ul
-            const nameProduct = buttonContainerClicked.nextSibling.children[1].textContent;
+            // Sending the needed elements for the addProductsToCart function
+            const nameProduct = buttonContainerClicked.nextSibling.querySelector(".product-description__name").textContent;
             const productCounter = productCounterElement.textContent;
-            const priceProduct = buttonContainerClicked.nextSibling.children[2].textContent;
+            const priceProduct = buttonContainerClicked.nextSibling.querySelector(".product-description__price").textContent;
 
             addProductsToCart(nameProduct, productCounter, priceProduct);
         } 
@@ -174,10 +163,10 @@ function addSelectedStyles(event) {
 }
 
 function addProductsToCart(productName, counter, productPrice) {
-    //Primero creamos los elementos que van a recibir la informacion
+    // Creating the elements that are going to contain the information
     const cart = document.querySelector(".cart");
     const emptyCart = document.querySelector(".cart__empty");
-    const productContainerInCart = document.createElement("div");
+    const productContainerInCartElement = document.createElement("div");
     const productNameElement = document.createElement("p");
     const pricingContainer = document.createElement("div");
     const counterOfProductsSelected = document.createElement("span");
@@ -185,47 +174,51 @@ function addProductsToCart(productName, counter, productPrice) {
     const accumulatedPriceElement = document.createElement("span");
     const buttonToRemoveProduct = document.createElement("button");
     const iconInsideButton = document.createElement("img");
-    let orderTotalContainer = document.querySelector(".cart__order-total-container");
-    console.log(orderTotalContainer);
     
-    //Añadiendo las clases de los estilos a los elementos
-    emptyCart.id = "inactive"
-    // emptyCart.remove()
-    productContainerInCart.classList.add("cart__product-selected-container");
+    // Adding the style classes to the elements
+    emptyCart.id = "inactive";
+    productContainerInCartElement.classList.add("cart__product-selected-container");
     productNameElement.classList.add("product-selected__name");
     pricingContainer.classList.add("product-selected__pricing-container");
     counterOfProductsSelected.classList.add("counter");
     defaultPriceElement.classList.add("default-price");
     accumulatedPriceElement.classList.add("accumulated-price");
     buttonToRemoveProduct.classList.add("remove-button");
-    iconInsideButton.classList.add
 
-    //Anidando los elementos dentro de los contenedores
-    cart.insertBefore(productContainerInCart, cart.children[1]);
-    productContainerInCart.append(productNameElement, pricingContainer);
+    // Adding the information on the elements
+    counterOfProductsSelected.textContent = `${counter}x`;
+    productNameElement.textContent = productName;
+    defaultPriceElement.textContent = `@ ${productPrice}`;
+    accumulatedPriceElement.textContent = productPrice;
+
+    // Validates if the product container exists, if it does then placed the next product container after the last one.
+    const productContainerInCart = cart.querySelector(".cart__product-selected-container");
+
+    if(cart.contains(productContainerInCart)) {
+        const orderTotalElement = cart.querySelector(".cart__order-total-container");
+        cart.insertBefore(productContainerInCartElement, orderTotalElement);
+    } else {
+        emptyCart.after(productContainerInCartElement);
+    }
+    productContainerInCartElement.append(productNameElement, pricingContainer);
     pricingContainer.append(counterOfProductsSelected, defaultPriceElement, accumulatedPriceElement, buttonToRemoveProduct);
     iconInsideButton.src = "./icons/icon-remove-item.svg";
     buttonToRemoveProduct.append(iconInsideButton);
 
-    //Añadiendo la informacion en los elementos
-    counterOfProductsSelected.textContent = counter + "x";
-    productNameElement.textContent = productName;
-    defaultPriceElement.textContent = "@" + " " + productPrice;
-    accumulatedPriceElement.textContent = productPrice;
+    // Validates if the orderTotalContainerModal DON’T exist, if that’s true then creates it.
+    let orderTotalContainerModal = document.querySelector(".cart__order-total-container");
+    console.log(orderTotalContainerModal);
 
-    if(!orderTotalContainer) {
+    if(!orderTotalContainerModal) {
         //ORDER TOTAL
-        orderTotalContainer = document.createElement("div");
-        const orderTotalParagraph = document.createElement("p");
+        orderTotalContainerModal = document.createElement("div");
+        const orderTotalParagraphModal = document.createElement("p");
         const orderTotalResult = document.createElement("p");
 
-        orderTotalContainer.classList.add("cart__order-total-container");
-        orderTotalParagraph.textContent = "Order Total";
-        orderTotalParagraph.classList.add("order-total-paragraph");
+        orderTotalContainerModal.classList.add("cart__order-total-container");
+        orderTotalParagraphModal.textContent = "Order Total";
+        orderTotalParagraphModal.classList.add("order-total-paragraph");
         orderTotalResult.classList.add("order-total-result");
-
-        cart.insertBefore(orderTotalContainer, cart.children[3]);
-        orderTotalContainer.append(orderTotalParagraph, orderTotalResult);
 
         //CARBON NEUTRAL DELIVERY
         const carbonNeutralContainer = document.createElement("div");
@@ -238,10 +231,6 @@ function addProductsToCart(productName, counter, productPrice) {
         carbonNeutralParagraph.innerHTML = "This is a <span>carbon-neutral</span> delivery";
         carbonNeutralParagraph.classList.add("carbon-neutral-paragraph");
 
-        cart.insertBefore(carbonNeutralContainer, cart.children[4]);
-        carbonNeutralContainer.append(carbonNeutralIcon, carbonNeutralParagraph);
-
-
         //CONFIRM ORDER
         const confirmOrderButton = document.createElement("button");
 
@@ -249,15 +238,18 @@ function addProductsToCart(productName, counter, productPrice) {
         confirmOrderButton.classList.add("order-button");
         confirmOrderButton.textContent = "Confirm Order";
 
-        cart.insertBefore(confirmOrderButton, cart.children[5]);
-        console.log(cart.children.length);
-        
+        cart.insertBefore(orderTotalContainerModal, productContainerInCart);
+        orderTotalContainerModal.append(orderTotalParagraphModal, orderTotalResult);
+
+        cart.append(confirmOrderButton);
+
+        cart.insertBefore(carbonNeutralContainer, confirmOrderButton);
+        carbonNeutralContainer.append(carbonNeutralIcon, carbonNeutralParagraph);
     }
     
     quantityOfProductsInsideCart();
 }
 
-// Incrementar y decrementar items
 function increaseAndDecreaseItems(event) {
     console.log(event);
     const plusButtonClicked = event.target.closest(".plus-button");
@@ -282,11 +274,9 @@ function increaseAndDecreaseItems(event) {
     }
 }
 
-// Actualizar producto dentro del carrito
 function updateProductInsideCart(event, productCounter) {
-    const cart = event.target.closest("main").children[2];
+    const cart = event.target.closest("main").querySelector(".cart");
     let cartProductCounter = cart.querySelectorAll(".counter");
-    console.log(cartProductCounter);
     let defaultPrice = cart.querySelectorAll(".default-price");
     let accumulatedPrices = cart.querySelectorAll(".accumulated-price");
 
@@ -295,7 +285,7 @@ function updateProductInsideCart(event, productCounter) {
 
         let accumulatedPriceNumber = Number(accumulatedPrices[index].textContent.substring(1));
 
-        let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.children[1].textContent;
+        let productCounterName = productCounter.closest(".add-remove-to-cart-container").nextSibling.querySelector(".product-description__name").textContent;
 
         let cartProductName = cartProductCounter[index].closest(".product-selected__pricing-container").previousSibling.textContent;
 
@@ -313,53 +303,36 @@ function updateProductInsideCart(event, productCounter) {
     quantityOfProductsInsideCart();
 }
 
-// Remover producto del carrito
 function removeProductFromCart(event) {
-    console.log(event);
-
     const cart = event.target.closest(".cart");
-    console.log(cart);
-
-    const cartProductSelected = cart.children[1];
-    console.log(cartProductSelected);
-
-    const liContainerItems = event.target.closest(".cart").previousSibling.previousSibling.children;
-    console.log(liContainerItems);
+    const cartProductSelected = event.target.closest(".cart__product-selected-container");
+    const liContainerItems = event.target.closest("main").querySelector("ul").children;
 
     for (let index = 0; index < liContainerItems.length; index++) {
-        console.log(liContainerItems[index].children[1]);
+        const liContainerName = liContainerItems[index].closest("li").querySelector(".product-description__name").textContent;
+        const minusButton = liContainerItems[index].closest("li").querySelector(".minus-button");
+        const counterMenu = liContainerItems[index].closest("li").querySelector(".product-counter");
+        const plusButton = liContainerItems[index].closest("li").querySelector(".plus-button");
 
-        const liContainerName = liContainerItems[index].closest("li")?.children[2]?.children[1]?.textContent;
-        console.log(liContainerName);
+        const liContainerImage = liContainerItems[index].closest("li").querySelector(".product-image");
+        const liContainerButton = liContainerItems[index].closest("li").querySelector(".add-remove-to-cart-container");
 
-        const minusButton = liContainerItems[index].closest("li")?.children[1]?.children[0];
-        const counterMenu = liContainerItems[index].closest("li")?.children[1]?.children[1];
-        const plusButton = liContainerItems[index].closest("li")?.children[1]?.children[2];
-
-        const liContainerStyles = liContainerItems[index].closest("li")?.children[0];
-        const liContainerButton = liContainerItems[index].closest("li")?.children[1];
-
-        let cartProductCounter = cartProductSelected.querySelectorAll(".product-selected__name");
-        console.log(cartProductCounter);
-        
+        const cartProductName = cartProductSelected.querySelectorAll(".product-selected__name");
 
         if (liContainerName) {
-            for (let i = 0; i < cartProductCounter.length; i++) {
-                const cartProductContainer = cartProductCounter[i].closest(".cart__product-selected-container");
-                console.log(cartProductContainer);
+            for (let i = 0; i < cartProductName.length; i++) {
+                const cartProductContainer = cartProductName[i].closest(".cart__product-selected-container");
 
-                if (liContainerName === cartProductCounter[i].textContent) {
+                if (liContainerName === cartProductName[i].textContent) {
                     cartProductContainer.remove();
                     minusButton.remove();
                     counterMenu.remove();
                     plusButton.remove();
-                    liContainerStyles.classList.remove("selected-product");
+                    liContainerImage.classList.remove("selected-product");
                     liContainerButton.classList.remove("add-to-cart--selected");
 
                     if (!liContainerItems[index].querySelector(".add-cart__icon") && !liContainerItems[index].querySelector(".add-cart__text")) {
-                        const addToCartButton = liContainerItems[index].children[1];
-                        console.log(addToCartButton);
-                        
+                        const addToCartButton = liContainerItems[index].querySelector(".add-remove-to-cart-container");                        
                         const cartIcon = document.createElement("img");
                         const cartText = document.createElement("span");
                         cartIcon.src = "./icons/icon-add-to-cart.svg";
@@ -369,16 +342,15 @@ function removeProductFromCart(event) {
                         addToCartButton.append(cartIcon);
                         addToCartButton.append(cartText);
 
-                        if (cart.children.length < 6) {
+                        const cartProductContainer = document.querySelector(".cart__product-selected-container");
+                        if (!cart.contains(cartProductContainer)) {
                             const emptyCart = cart.querySelector(".cart__empty");
-                            console.log(emptyCart);
-                            const orderTotalContainer = cart.querySelector(".cart__order-total-container");
+                            const orderTotalContainerModal = cart.querySelector(".cart__order-total-container");
                             const carbonNeutralContainer = cart.querySelector(".cart__carbon-neutral-container");
                             const confirmOrderButton = cart.querySelector(".cart__confirm-order");
-                            console.log({orderTotalContainer, carbonNeutralContainer, confirmOrderButton});
                             
                             emptyCart.id = "none";
-                            orderTotalContainer.remove();
+                            orderTotalContainerModal.remove();
                             carbonNeutralContainer.remove();
                             confirmOrderButton.remove();
                         }
@@ -391,11 +363,11 @@ function removeProductFromCart(event) {
 
 function quantityOfProductsInsideCart() {
     const quantityProductsElement = document.querySelector(".quantity-products");
-    const cartCounterItems = document.querySelectorAll(".cart__product-selected-container");
+    const cartProductSelected = document.querySelectorAll(".cart__product-selected-container");
     let totalQuantity = 0;
     
-    for (let index = 0; index < cartCounterItems.length; index++) {    
-        let cartCounter = cartCounterItems[index].children[1].children[0].textContent;
+    for (let index = 0; index < cartProductSelected.length; index++) {    
+        let cartCounter = cartProductSelected[index].querySelector(".counter").textContent;
         let cartCounterNumber = Number(cartCounter[0]);
 
         if (cartCounter.length > 2) {
@@ -408,26 +380,19 @@ function quantityOfProductsInsideCart() {
         }
     }
 
-    if(cartCounterItems.length === 0) {
+    if(cartProductSelected.length === 0) {
         quantityProductsElement.textContent = 0;
     }
 }
 
 function totalOrderPrice() {
     const orderTotalElement = document.querySelector(".order-total-result");
-    console.log(orderTotalElement);
-
     const accumulatedPriceItems = document.querySelectorAll(".accumulated-price");
-    console.log(accumulatedPriceItems);
-
     let totalPrice = 0;
 
     for (let index = 0; index < accumulatedPriceItems.length; index++) {
         let accumulatedPrices = accumulatedPriceItems[index].textContent;
-        console.log(accumulatedPrices);
-
         let accumulatedPricesNumber = Number(accumulatedPrices.substring(1));
-        console.log(accumulatedPricesNumber);
         
         totalPrice += accumulatedPricesNumber;
         orderTotalElement.textContent = `$${totalPrice.toFixed(2)}`;
@@ -438,33 +403,25 @@ function openModalWindow() {
     const main = document.querySelector("main");
     const cart = document.querySelector(".cart");
     const productContainerInCart = cart.querySelectorAll(".cart__product-selected-container");
-    console.log(productContainerInCart);
     const modalWindowOpen = document.querySelector(".modal-window");
 
     if (!modalWindowOpen) {
-        //Creando elementos
         const modalWindow = document.createElement("div");
         const modalCard = document.createElement("section");
         const confirmedImageElement = document.createElement("img");
         const orderConfirmedTitle = document.createElement("h2");
         const orderConfirmedSubtitle = document.createElement("p");
-        //Products section
         const productsSectionContainer = document.createElement("div");
-        //Hay que hacer una validacion para que cree un contenedor del producto por cada contenedor del producto que haya en el carrito
-        //DE AQUI
+        
+        // This for cycle is to walk through every product container inside the cart, to assign all the information to the products in the modal window card
         for (let index = 0; index < productContainerInCart.length; index++) {
-            console.log(productContainerInCart[index]);
-
             const productNameInCart = productContainerInCart[index].querySelector(".product-selected__name").textContent;
-            console.log(productNameInCart);
             
             const pricingContainer = productContainerInCart[index].querySelector(".product-selected__pricing-container");
-            console.log(pricingContainer);
             
             const counterInCart = pricingContainer.querySelector(".counter").textContent;
             const defaultPriceInCart = pricingContainer.querySelector(".default-price").textContent;
             const accumulatedPriceInCart = pricingContainer.querySelector(".accumulated-price").textContent;
-            console.log({counterInCart, defaultPriceInCart, accumulatedPriceInCart});
             
             const productContainer = document.createElement("div");
             const productImage = document.createElement("img");
@@ -472,11 +429,9 @@ function openModalWindow() {
             const productCounter = document.createElement("span");
             const productDefaultPrice = document.createElement("span");
             const productAccumulatedPrice = document.createElement("span");
-            console.log(jsonData);
 
+            // Walking through the global variable jsonData in order to assign the correct image of the product in the modal window card
             for(const data in jsonData)  {
-                console.log(jsonData[data].name);
-            
                 const productNameInJson = jsonData[data].name;
 
                 if(productNameInJson === productNameInCart) {
@@ -500,16 +455,13 @@ function openModalWindow() {
             productsSectionContainer.append(productContainer);
             productContainer.append(productImage, productName, productCounter, productDefaultPrice, productAccumulatedPrice);
         }
-        //HASTA AQUI
-        const orderTotalResultInCart = document.querySelector(".order-total-result").textContent;
 
-        const orderTotalContainer = document.createElement("div");
-        const orderTotalParagraph = document.createElement("p");
-        const orderTotalResult = document.createElement("p");
-        
+        const orderTotalResultInCart = document.querySelector(".order-total-result").textContent;
+        const orderTotalContainerModal = document.createElement("div");
+        const orderTotalParagraphModal = document.createElement("p");
+        const orderTotalResultModal = document.createElement("p");
         const startNewOrderButton = document.createElement("button");
 
-    //Añadiendo estilos a los elementos
         modalWindow.classList.add("modal-window");
         modalCard.classList.add("modal-card");
         confirmedImageElement.src = "./icons/icon-order-confirmed.svg";
@@ -519,26 +471,22 @@ function openModalWindow() {
         orderConfirmedTitle.textContent = "Order Confirmed";
         orderConfirmedSubtitle.classList.add("modal-card__subtitle");
         orderConfirmedSubtitle.textContent = "We hope you enjoy your food!";
-
-        orderTotalContainer.classList.add("products-section__order-total");
-        orderTotalParagraph.classList.add("order-total-paragraph");
-        orderTotalParagraph.textContent = "Order Total";
-        orderTotalResult.classList.add("order-total-result");
-        orderTotalResult.textContent = orderTotalResultInCart;
+        orderTotalContainerModal.classList.add("products-section__order-total");
+        orderTotalParagraphModal.classList.add("order-total-paragraph");
+        orderTotalParagraphModal.textContent = "Order Total";
+        orderTotalResultModal.classList.add("order-total-result");
+        orderTotalResultModal.textContent = orderTotalResultInCart;
 
         startNewOrderButton.classList.add("modal-card__new-order-button", "order-button");
         startNewOrderButton.textContent = "Start New Order";
 
-    //Posicionando elementos
         main.after(modalWindow);
         modalWindow.append(modalCard);
         modalCard.append(confirmedImageElement, orderConfirmedTitle, orderConfirmedSubtitle, productsSectionContainer, startNewOrderButton);
-
-        productsSectionContainer.append(orderTotalContainer);
-        orderTotalContainer.append(orderTotalParagraph, orderTotalResult);
+        productsSectionContainer.append(orderTotalContainerModal);
+        orderTotalContainerModal.append(orderTotalParagraphModal, orderTotalResultModal);
 
         const newOrderButton = document.querySelector(".modal-card__new-order-button");
-        console.log(newOrderButton);
 
         if(newOrderButton.addEventListener("click", startNewOrder));
     }
